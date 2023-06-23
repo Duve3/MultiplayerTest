@@ -44,6 +44,7 @@ def threaded_client(conn, pid):
 
             if data == DisconnectMSG.encode(encoding):
                 print("Disconnected")
+                del playerList[pid]
                 conn.send(DisconnectRES.encode(encoding))
                 break
             else:
@@ -53,6 +54,10 @@ def threaded_client(conn, pid):
 
             print("Received: ", data)
             print("Sending : ", reply)
+            try:
+                print(f"{(reply[0].x, reply[0].y) = }")
+            except IndexError as ee:
+                print(f"l59 - {ee = }")
 
             # game logic
             collisionList = [pygame.Rect(plr.rect) for plr in reply]
@@ -63,11 +68,11 @@ def threaded_client(conn, pid):
                 print(f"{[playerList.keys()] = }")
                 collideID = [key for key in playerList.keys()].index(reply[collision].id)  # we are doing key for key ... because we are trying to avoid getting a dict_keys object from the playerList.keys()
                 print(f"{collideID = }")
-                playerList[collideID].health -= 5
+                playerList[collideID].health -= 0.1
 
             for plr in playerList.values():
-                plr.width = plr.health // 2
-                plr.height = plr.health // 2
+                plr.width = abs(plr.health // 2)
+                plr.height = abs(plr.health // 2)
 
             playerList[pid].x = DataPickled[0]  # x
             playerList[pid].y = DataPickled[1]  # y
@@ -75,7 +80,7 @@ def threaded_client(conn, pid):
             # refresh reply
             reply = [x for i, x in enumerate(playerList.values()) if i != pid and x is not None]
 
-            print(playerList[pid].__vars__())
+            print(f"{playerList[pid].__vars__() = }")
 
             conn.sendall(pickle.dumps(reply))
             conn.sendall(pickle.dumps(playerList[pid]))
