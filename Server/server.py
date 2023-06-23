@@ -75,7 +75,7 @@ def threaded_client(conn, pid):
             # refresh reply
             reply = [x for i, x in enumerate(playerList.values()) if i != pid and x is not None]
 
-            print(playerList[pid].__repr__())
+            print(playerList[pid].__vars__())
 
             conn.sendall(pickle.dumps(reply))
             conn.sendall(pickle.dumps(playerList[pid]))

@@ -36,5 +36,5 @@ class Player:
     def update(self):
         self.rect = (self.x, self.y, self.width, self.height)
 
-    def __repr__(self):
+    def __vars__(self):
         return vars(self)
