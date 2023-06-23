@@ -10,8 +10,6 @@ class Network:
         self.addr = (self.server, self.port)
         self.DisconnectMSG = "!!!Disconnect"
         self.DisconnectRES = "Disconnected"
-        self.HitMSG = "HIT:"
-        self.HitRES = "Player Hit"
         self.header = 2048
         self.encoding = "utf-8"
 
@@ -20,21 +18,12 @@ class Network:
     def getSelfPlayer(self):
         return self.p
 
-    def playerHit(self, plrHit):
-        try:
-            self.client.send(self.HitMSG.encode(self.encoding) + pickle.dumps(plrHit))
-            res = self.client.recv(self.header)
-            if res != self.HitRES.encode(self.encoding):
-                print("WARNING: Server did not respond with proper response on HITMSG")
-        except socket.error as e:
-            print(f"l41 - {e = }")
-
     def connect(self):
         try:
             self.client.connect(self.addr)
             return pickle.loads(self.client.recv(self.header))
         except Exception as e:
-            print(f"l24 - {e =}")
+            print(f"l24 - {e = }")
             pass
 
     def sendPlayerData(self, data):
@@ -43,6 +32,7 @@ class Network:
             self.client.send(pickle.dumps(freshData))
             playerList = self.client.recv(self.header)
             selfData = self.client.recv(self.header)
+            print(f"{selfData = }, {playerList = }")
             return pickle.loads(playerList), pickle.loads(selfData)
         except socket.error as e:
             print(f"l32 - {e = }")

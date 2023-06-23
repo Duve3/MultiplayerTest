@@ -33,12 +33,6 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-        collisionList = [pygame.Rect(plr.rect) for plr in playerList]
-        collision = pygame.Rect.collidelist(pygame.Rect(player.rect), collisionList)
-        if collision != -1:
-            print(f"{collision = }")
-            network.playerHit(playerList[collision])
-
         player.move()
         print(f"{player.health = }")
         redrawWindow(win, player, playerList)

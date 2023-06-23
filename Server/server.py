@@ -3,6 +3,7 @@ from _thread import *
 from player import Player
 import pickle
 import random
+import pygame
 
 encoding = "utf-8"
 DisconnectMSG = "!!!Disconnect"
@@ -45,36 +46,40 @@ def threaded_client(conn, pid):
                 print("Disconnected")
                 conn.send(DisconnectRES.encode(encoding))
                 break
-            elif data.startswith(HitMSG.encode(encoding)):
-                print("sw HIT:")
-                print(f"{playerList = }")
-                dmgPlayer = pickle.loads(data.split(b":")[1])
-                print("DMGPLR PASS")
-
-                if dmgPlayer.id in playerList:
-                    dmgPlayer.health -= 5
-
-                    conn.send(HitRES.encode(encoding))
-                else:
-                    conn.send(b"failed")
-
-                continue
             else:
                 reply = [x for i, x in enumerate(playerList.values()) if i != pid and x is not None]
 
             DataPickled = pickle.loads(data)
-            playerList[pid].x = DataPickled[0]  # x
-            playerList[pid].y = DataPickled[1]  # y
 
             print("Received: ", data)
             print("Sending : ", reply)
 
-            print()
+            # game logic
+            collisionList = [pygame.Rect(plr.rect) for plr in reply]
+            collision = pygame.Rect.collidelist(pygame.Rect(playerList[pid].rect), collisionList)
+            if collision != -1:
+                print(f"{collision = }")
+                print(f"{collisionList = }")
+                print(f"{[playerList.keys()] = }")
+                collideID = [key for key in playerList.keys()].index(reply[collision].id)  # we are doing key for key ... because we are trying to avoid getting a dict_keys object from the playerList.keys()
+                print(f"{collideID = }")
+                playerList[collideID].health -= 5
+
+            for plr in playerList.values():
+                plr.width = plr.health // 2
+                plr.height = plr.health // 2
+
+            playerList[pid].x = DataPickled[0]  # x
+            playerList[pid].y = DataPickled[1]  # y
+
+            # refresh reply
+            reply = [x for i, x in enumerate(playerList.values()) if i != pid and x is not None]
+
+            print(playerList[pid].__repr__())
 
             conn.sendall(pickle.dumps(reply))
             conn.sendall(pickle.dumps(playerList[pid]))
 
-            # player modification
         except Exception as err:
             print(f"{err = }")
             break
