@@ -59,6 +59,10 @@ def threaded_client(conn, pid):
             except IndexError as ee:
                 print(f"l59 - {ee = }")
 
+            playerList[pid].x = DataPickled[0]  # x
+            playerList[pid].y = DataPickled[1]  # y
+            playerList[pid].update()
+
             # game logic
             collisionList = [pygame.Rect(plr.rect) for plr in reply]
             collision = pygame.Rect.collidelist(pygame.Rect(playerList[pid].rect), collisionList)
@@ -74,8 +78,7 @@ def threaded_client(conn, pid):
                 plr.width = abs(plr.health // 2)
                 plr.height = abs(plr.health // 2)
 
-            playerList[pid].x = DataPickled[0]  # x
-            playerList[pid].y = DataPickled[1]  # y
+
 
             # refresh reply
             reply = [x for i, x in enumerate(playerList.values()) if i != pid and x is not None]

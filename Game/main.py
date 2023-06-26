@@ -3,17 +3,17 @@ from network import Network
 
 width = 500
 height = 500
-win = pygame.display.set_mode((width, height))
+screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Client")
 
 
-def redrawWindow(win, player, playerList):
+def DEPERCATED_redrawWindow(win, player, playerList):
     win.fill((255, 255, 255))
     player.draw(win)
     print(f"{playerList = }")
     for plr in playerList:
         plr.draw(win)
-    pygame.display.update()
+    pygame.display.flip()
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
     print("CLOCK MADE")  # rm
 
     while run:
-        clock.tick(60)
+        clock.tick(60)  # 17ish ms/frame
         playerList, player = network.sendPlayerData(player)
 
         for event in pygame.event.get():
@@ -35,7 +35,15 @@ def main():
 
         player.move()
         print(f"{player.health = }")
-        redrawWindow(win, player, playerList)
+
+        # rendering
+        screen.fill((255, 255, 255))
+        player.draw(screen)
+
+        for plr in playerList:
+            plr.draw(screen)
+
+        pygame.display.flip()
 
     network.disconnect()
 
