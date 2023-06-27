@@ -61,7 +61,7 @@ def threaded_client(conn, pid):
 
             playerList[pid].x = DataPickled[0]  # x
             playerList[pid].y = DataPickled[1]  # y
-            playerList[pid].update()
+            playerList[pid].update()  # update rect
 
             # game logic
             collisionList = [pygame.Rect(plr.rect) for plr in reply]
